@@ -1,11 +1,11 @@
 {
-  "31337": {
-    "localhost": {
-      "name": "localhost",
-      "chainId": "31337",
+  "4": {
+    "rinkeby": {
+      "name": "rinkeby",
+      "chainId": "4",
       "contracts": {
         "NFTManager": {
-          "address": "0xCD8a1C3ba11CF5ECfa6267617243239504a98d90",
+          "address": "0x789d649EFB7372C723ae0cb5216C7FafEfd486C8",
           "abi": [
             {
               "inputs": [],
@@ -71,7 +71,7 @@
                   "type": "string"
                 }
               ],
-              "name": "createIdentityToken",
+              "name": "create",
               "outputs": [
                 {
                   "internalType": "uint256",
@@ -84,14 +84,7 @@
             },
             {
               "inputs": [],
-              "name": "deleteIdentityToken",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [],
-              "name": "getIdentityToken",
+              "name": "get",
               "outputs": [
                 {
                   "internalType": "uint256",
@@ -132,6 +125,13 @@
                 }
               ],
               "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "remove",
+              "outputs": [],
+              "stateMutability": "nonpayable",
               "type": "function"
             },
             {

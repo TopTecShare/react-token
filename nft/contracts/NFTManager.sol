@@ -1,6 +1,6 @@
 //SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
- 
+
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "./ERC721.sol";
 
@@ -11,9 +11,9 @@ contract NFTManager is ERC721 {
     event IdentityTokenAssigned(address user);
     event IdentityTokenRemoved(address user);
 
-    constructor() ERC721("PersonalIdentityNFT", "PIN") {}
+    constructor() ERC721("PersonalIdentityToken", "PIT") {}
 
-    function createIdentityToken(string memory cid) external returns(uint256) {
+    function create(string memory cid) external returns (uint256) {
         _tokenIds.increment();
 
         uint256 id = _tokenIds.current();
@@ -25,11 +25,11 @@ contract NFTManager is ERC721 {
         return id;
     }
 
-    function getIdentityToken() view external returns(uint256) {
+    function get() external view returns (uint256) {
         return _nft[msg.sender];
     }
 
-    function deleteIdentityToken() external {
+    function remove() external {
         uint256 tokenId = _nft[msg.sender];
         _burn(tokenId);
 

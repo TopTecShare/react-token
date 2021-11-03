@@ -14,20 +14,33 @@ import { signTypedData } from 'eth-sig-util';
 import { create } from 'ipfs-http-client'
 import { useContractLoader, useUserProviderAndSigner } from 'eth-hooks';
 import { useContractConfig } from './hooks/useContractConfig';
+import { Transactor } from './helpers/Transactor';
 const { isMetaMaskInstalled } = MetaMaskOnboarding;
 
 function App() {
-  const [ data, setData ] = useState("");
-  const chainId = 31337;
+  const [ alert, setAlert ] = useState("");
+  const chainId = 4;
   const config = useContractConfig();
   const [ provider, setProvider ] = useState();
   const providerAndSigner = useUserProviderAndSigner(provider)
   const contracts = useContractLoader(providerAndSigner.signer, config, chainId);
-
+  const tx = Transactor(providerAndSigner.signer);
+  
   useEffect( () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    setProvider(provider);
+    const loadProvider = async() => {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const userAccount = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      setProvider(provider);
+    }
+    loadProvider();
   }, []);
+
+  const newAlert = (text) => {
+    setAlert(text);
+    setTimeout(() => {
+      setAlert("");
+   }, 3500)
+  }
 
   const encryptData = async(cleartext) => {
     const accounts = await window.ethereum.request({
@@ -77,31 +90,74 @@ function App() {
   }
 
   const createPIN = async() => {
-    const dataToUpload = await encryptData(data);
-    const cid = await uploadToIPFS(dataToUpload);
-    console.log("[createPIN] cid:", cid);
-    await contracts.NFTManager.createIdentityToken(cid);
+    console.log("createPIN");
+
+    let userData = prompt("KYC Provider\nINPUT DATA\nPlease enter your full name", "John Doe");
+
+    if(userData === "") {
+      setAlert("Error: null data");
+
+      return;
+    }
+
+    try {
+      console.log("Encrypting...");
+      const dataToUpload = await encryptData(userData);
+      console.log("Uploading...");
+      const cid = await uploadToIPFS(dataToUpload);
+      console.log("Minting...");
+      await tx(contracts.NFTManager.create(cid));
+      console.log("...OK");
+
+      newAlert("Token created with data:" + userData);
+    } catch(e) {
+      console.log("...FAIL");
+      console.error(e);
+      newAlert("Error occurred");
+    }
   }
 
   const getPIN = async() => {
-    const tokenID = await contracts.NFTManager.getIdentityToken();
-    const cid = await contracts.NFTManager.tokenURI(tokenID);
-    const res = await fetch(`https://ipfs.io/ipfs/${cid}`);
-    const response = await res.json();
-    const userData = decryptData(response.data);
-    console.log("userData", userData); // available in plaintext to querying dapp
+    try {
+      const tokenID = await contracts.NFTManager.get();
+      const cid = await contracts.NFTManager.tokenURI(tokenID);
+      const res = await fetch(`https://ipfs.io/ipfs/${cid}`);
+      const response = await res.json();
+      const userData = await decryptData(response.data);
+      newAlert("Token was read and contains data: " + userData);
+    } catch(e) {
+      console.log("...FAIL");
+      console.error(e);
+      newAlert("Error occurred");
+    }
   }
 
   const deletePIN = async() => {
-    await contracts.NFTManager.deleteIdentityToken();
+    try {
+      console.log("Deleting...");
+      await tx(contracts.NFTManager.remove());
+      console.log("...OK");
+      newAlert("Token was deleted");
+    } catch(e) {
+      console.log("...FAIL");
+      console.error(e);
+      newAlert("Error!");
+    }
   }
 
   return (
-    <div>
-      <textarea onChange={e => setData(e.target.value)}>{data}</textarea>
-      <button onClick={() => createPIN()}>Create Personal Identity NFT</button>
-      <button onClick={() => getPIN()}>Read Personal Identity NFT</button>
-      <button onClick={() => deletePIN()}>Delete Personal Identity NFT</button>
+    <div className="text-center">
+      <span className="form-signin">
+        <h1 className="h3 mb-3 font-weight-normal">KYC Token</h1>
+        { alert.length > 0 &&
+          <div className="alert alert-primary" role="alert">{alert}</div>
+        }
+        <br />
+        <button className="btn btn-lg btn-primary btn-block" onClick={() => createPIN()}>Create Personal Identity NFT</button>
+        <button className="btn btn-lg btn-success btn-block" onClick={() => getPIN()}>Read Personal Identity NFT</button>
+        <button className="btn btn-lg btn-danger btn-block" onClick={() => deletePIN()}>Delete Personal Identity NFT</button>
+        <p className="mt-5 mb-3 text-muted">Personal Identity Token</p>
+      </span>
     </div>
   );
 }

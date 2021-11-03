@@ -46,7 +46,13 @@ contract ERC721 is Context, ERC165 {
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override
+        returns (bool)
+    {
         return
             interfaceId == type(IERC721).interfaceId ||
             interfaceId == type(IERC721Metadata).interfaceId ||
@@ -56,30 +62,38 @@ contract ERC721 is Context, ERC165 {
     /**
      * @dev See {IERC721-ownerOf}.
      */
-    function ownerOf(uint256 tokenId) public view virtual  returns (address) {
+    function ownerOf(uint256 tokenId) public view virtual returns (address) {
         address owner = _owners[tokenId];
-        require(owner != address(0), "ERC721: owner query for nonexistent token");
+        require(
+            owner != address(0),
+            "ERC721: owner query for nonexistent token"
+        );
         return owner;
     }
 
     /**
      * @dev See {IERC721Metadata-name}.
      */
-    function name() public view virtual  returns (string memory) {
+    function name() public view virtual returns (string memory) {
         return _name;
     }
 
     /**
      * @dev See {IERC721Metadata-symbol}.
      */
-    function symbol() public view virtual  returns (string memory) {
+    function symbol() public view virtual returns (string memory) {
         return _symbol;
     }
 
     /**
      * @dev See {IERC721Metadata-tokenURI}.
      */
-    function tokenURI(uint256 tokenId) public view virtual  returns (string memory) {
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        virtual
+        returns (string memory)
+    {
         require(_exists(tokenId), "ERC721: URI query for nonexistent token");
 
         string memory _tokenURI = _tokenURIs[tokenId];
@@ -190,7 +204,7 @@ contract ERC721 is Context, ERC165 {
         delete _owners[tokenId];
 
         if (bytes(_tokenURIs[tokenId]).length != 0) {
-          delete _tokenURIs[tokenId];
+            delete _tokenURIs[tokenId];
         }
 
         emit Transfer(owner, address(0), tokenId);
@@ -213,11 +227,20 @@ contract ERC721 is Context, ERC165 {
         bytes memory _data
     ) private returns (bool) {
         if (to.isContract()) {
-            try IERC721Receiver(to).onERC721Received(_msgSender(), from, tokenId, _data) returns (bytes4 retval) {
+            try
+                IERC721Receiver(to).onERC721Received(
+                    _msgSender(),
+                    from,
+                    tokenId,
+                    _data
+                )
+            returns (bytes4 retval) {
                 return retval == IERC721Receiver.onERC721Received.selector;
             } catch (bytes memory reason) {
                 if (reason.length == 0) {
-                    revert("ERC721: transfer to non ERC721Receiver implementer");
+                    revert(
+                        "ERC721: transfer to non ERC721Receiver implementer"
+                    );
                 } else {
                     assembly {
                         revert(add(32, reason), mload(reason))
@@ -236,7 +259,10 @@ contract ERC721 is Context, ERC165 {
      *
      * - `tokenId` must exist.
      */
-    function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal virtual {
+    function _setTokenURI(uint256 tokenId, string memory _tokenURI)
+        internal
+        virtual
+    {
         require(_exists(tokenId), "ERC721: URI set of nonexistent token");
         _tokenURIs[tokenId] = _tokenURI;
     }
