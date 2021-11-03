@@ -5,6 +5,7 @@
   "license": "BUSL-1.1",
   "homepage": "https://grcasanova.github.io/Personal-Identity-Token",
   "dependencies": {
+    "@complycube/api": "^1.1.4",
     "@metamask/onboarding": "^1.0.1",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -48,5 +49,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "proxy": "http://localhost:4000"
 }

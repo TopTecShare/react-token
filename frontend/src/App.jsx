@@ -15,6 +15,7 @@ import { create } from 'ipfs-http-client'
 import { useContractLoader, useUserProviderAndSigner } from 'eth-hooks';
 import { useContractConfig } from './hooks/useContractConfig';
 import { Transactor } from './helpers/Transactor';
+
 const { isMetaMaskInstalled } = MetaMaskOnboarding;
 
 function App() {
