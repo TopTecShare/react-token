@@ -19,6 +19,8 @@ import { Transactor } from './helpers/Transactor';
 const { isMetaMaskInstalled } = MetaMaskOnboarding;
 
 function App() {
+  const [ name, setName ] = useState("");
+  const [ surname, setSurname ] = useState("");
   const [ alert, setAlert ] = useState("");
   const chainId = 4;
   const config = useContractConfig();
@@ -154,6 +156,12 @@ function App() {
           <div className="alert alert-primary" role="alert">{alert}</div>
         }
         <br />
+        <div class="mb-3">
+          <input type="text" class="form-control" id="name" placeholder="Name" onChange={(e) => setName(e.target.value)} />
+        </div>
+        <div class="mb-3">
+          <input type="text" class="form-control" id="surname" placeholder="Surname" onChange={(e) => setSurname(e.target.value)} />
+        </div>
         <button className="btn btn-lg btn-primary btn-block" onClick={() => createPIN()}>Create Personal Identity NFT</button>
         <button className="btn btn-lg btn-success btn-block" onClick={() => getPIN()}>Read Personal Identity NFT</button>
         <button className="btn btn-lg btn-danger btn-block" onClick={() => deletePIN()}>Delete Personal Identity NFT</button>
