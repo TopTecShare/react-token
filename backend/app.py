@@ -1,8 +1,11 @@
+import os
+import yaml
+import logging
+from complycube import ComplyCubeClient
+
 from quart import Quart, render_template, websocket
 
-from .config import CC_API_KEY
-
-import logging
+CONFIG_LOC = '~/.personal-identity-token-config'
 
 
 logging.basicConfig(
@@ -14,6 +17,24 @@ logging.basicConfig(
 
 logger = logging.getLogger('backend.app')
 
+
+def get_api_config():
+    if not os.path.exists(CONFIG_LOC):
+        raise FileNotFoundError(
+            f'You need to create a server-side config file: `{CONFIG_LOC!r}`\n'
+            'This will be in YAML format and contain the following:\n'
+            '    CC_API_KEY: YourApiKey\n'
+            '    NFT_MANAGER_ADDRESS: NftManagerAddress\n',
+        )
+
+    with open(CONFIG_LOC, "r") as stream:
+        config = yaml.safe_load(stream)
+    return config
+
+
+CONFIG = get_api_config()
+
+cc = ComplyCubeClient(api_key=CONFIG['CC_API_KEY'])
 
 app = Quart(__name__)
 
