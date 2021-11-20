@@ -1,6 +1,9 @@
 from quart import Quart, render_template, websocket
 
+from .config import CC_API_KEY
+
 import logging
+
 
 logging.basicConfig(
     format='[%(asctime)s] %(levelname)s: %(message)s',

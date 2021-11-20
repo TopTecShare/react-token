@@ -1,1 +1,2 @@
-API_KEY: ''
+CC_API_KEY: ''
+NFT_MANAGER_ADDRESS: ''
