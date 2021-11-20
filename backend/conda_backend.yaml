@@ -1,0 +1,11 @@
+name: backend
+channels:
+  - anaconda
+  - numba
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.8
+  - quart
+  - pip:
+    - complycube
