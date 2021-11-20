@@ -55,11 +55,93 @@ class BadAPIRequestError(Exception):
         return rv
 
 
-@app.route('/')
+@app.errorhandler(BadAPIRequestError)
+async def bad_request(error):
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response
+
+
+@app.route('/createClient', methods=['GET', 'POST'])
+async def create_client():
+    if request.method == 'GET':
+        return """
+               <form method='POST'>
+                <input type='text' name='firstName' id='firstName' placeholder='John'></input>
+                <input type='text' name='lastName' id='lastName' placeholder='Doe'></input>
+                <input type='text' name='email' id='email' placeholder='john.doe@example.com'></input>
+                <input type='text' name='dob' id='dob' placeholder='1990-01-01'></input>
+                <input type='submit' name='submit'></input>
+               </form>
+               """
+
+    elif request.method == 'POST':
+
+        form_data = await request.form
+        required_fields = ['firstName', 'lastName', 'email', 'dob']
+        missing_fields = [form_data.get(field) for field in required_fields if field is None]
+
+        logger.info(f'{request.path}: Received the client form-data:\n'
+                    f'{json.dumps(form_data, sort_keys=True, indent=2)}')
+        if missing_fields:
+            error_msg = f'The following required fields are missing from the request: {missing_fields}'
+            logger.info(error_msg)
+            raise BadAPIRequestError(str(error_msg), payload={'endpoint': request.path})
+
+        new_client = {
+            'type': 'person',
+            'email': form_data.get('email'),
+            'personDetails': {
+                'firstName': form_data.get('firstName'),
+                'lastName': form_data.get('lastName'),
+                'dob': form_data.get('dob'),
+            }
+        }
+
+        try:
+            result = cc_api.clients.create(**new_client).to_dict()
+            logger.info(f'Created client:\n{json.dumps(result, sort_keys=True, indent=2)}')
+        except complycube.error.ComplyCubeAPIError as error_msg:
+            logger.error(error_msg)
+            raise BadAPIRequestError(str(error_msg), payload={'endpoint': request.path})
+        return jsonify(result)
+
+
+@app.route('/createCheck', methods=['GET', 'POST'])
+async def create_check():
+    if request.method == 'GET':
+        return """
+               <form method='POST'>
+                <input type='text' name='id' id='id' placeholder='Input ComplyCubeId Here'></input>
+                <input type='text' name='checkType' id='checkType' placeholder='standard_screening_check'></input>
+                <input type='submit' name='submit'></input>
+               </form>
+               """
+    elif request.method == 'POST':
+
+        form_data = await request.form
+        required_fields = ['id', 'checkType']
+        missing_fields = [form_data.get(field) for field in required_fields if field is None]
+
+        logger.info(f'{request.path}: Received the client form-data:\n'
+                    f'{json.dumps(form_data, sort_keys=True, indent=2)}')
+        if missing_fields:
+            error_msg = f'The following required fields are missing from the request: {missing_fields}'
+            logger.info(error_msg)
+            raise BadAPIRequestError(str(error_msg), payload={'endpoint': request.path})
+
+        try:
+            result = cc_api.checks.create(form_data['id'], type=form_data['checkType']).to_dict()
+            logger.info(f'Created check:\n{json.dumps(result, sort_keys=True, indent=2)}')
+        except complycube.error.ComplyCubeAPIError as error_msg:
+            logger.error(error_msg)
+            raise BadAPIRequestError(str(error_msg), payload={'endpoint': request.path})
+        return jsonify(result)
+
+
 @app.route('/checkId', methods=['GET', 'POST'])
 async def check_id():
     if request.method == 'GET':
-        logger.info('Recieved GET-Request')
         return """
                <form method='POST'>
                 <input type='text' name='clientId' id='clientId' placeholder='Input ComplyCubeId Here'></input>
@@ -67,7 +149,6 @@ async def check_id():
                </form>
                """
     elif request.method == 'POST':
-        logger.info('Recieved POST-Request')
         client_id = (await request.form).get('clientId', None)
         if client_id is None:
             error_msg = 'No `clientId` found in POST data'
@@ -81,13 +162,6 @@ async def check_id():
             logger.error(error_msg)
             raise BadAPIRequestError(str(error_msg), payload={'endpoint': request.path})
         return jsonify(result)
-
-
-@app.errorhandler(BadAPIRequestError)
-async def bad_request(error):
-    response = jsonify(error.to_dict())
-    response.status_code = error.status_code
-    return response
 
 
 if __name__ == "__main__":
