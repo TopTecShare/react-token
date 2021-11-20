@@ -1,5 +1,5 @@
 # custom additions
-backend/config.py
+.personal-identity-token-config
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
