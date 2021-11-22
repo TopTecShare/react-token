@@ -71,6 +71,7 @@ async def create_client():
                 <input type='text' name='lastName' id='lastName' placeholder='Doe'></input>
                 <input type='text' name='email' id='email' placeholder='john.doe@example.com'></input>
                 <input type='text' name='dob' id='dob' placeholder='1990-01-01'></input>
+                <input type='text' name='walletAddress' id='walletAddress' placeholder='0xabcE56CF919319a323843E682C6e62F25E728612'></input>
                 <input type='submit' name='submit'></input>
                </form>
                """
