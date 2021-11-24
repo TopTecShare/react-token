@@ -27,7 +27,6 @@ export const Transactor = (providerOrSigner, gasPrice, etherscan) => {
         network = await providerOrSigner.getNetwork();
       }
 
-      console.log("network", network);
       var options = null;
       var notify = null;
         options = {

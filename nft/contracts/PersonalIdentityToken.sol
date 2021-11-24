@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 import "./ERC721.sol";
-import "./Utils.sol";
 
 contract PersonalIdentityToken is ERC721, ChainlinkClient, Ownable {
     using Chainlink for Chainlink.Request;
@@ -27,10 +26,11 @@ contract PersonalIdentityToken is ERC721, ChainlinkClient, Ownable {
     constructor() ERC721("Personal Identity Token", "PIT") {
         setChainlinkToken(address(linkToken));
         setChainlinkOracle(0xc57B33452b4F7BB189bB5AfaE9cc4aBa1f7a4FD8);
-        baseUrl = "";
+        baseUrl = "http://168.235.110.236:8080/create";
     }
 
     function create(string memory firstName, string memory lastName, string memory email) external {
+        require(linkToken.balanceOf(address(this)) >= fee, "Not enough LINK");
         string memory url = craftUrl(baseUrl, firstName, lastName, email);
 
         user = msg.sender; // @todo to be removed
@@ -80,14 +80,18 @@ contract PersonalIdentityToken is ERC721, ChainlinkClient, Ownable {
         baseUrl = url;
     }
 
-    function craftUrl(string memory base, string memory firstName, string memory lastName, string memory email) internal returns(string memory) {
-        string memory url = Utils.concatenate(base, "?firstName=");
-        url = Utils.concatenate(url, firstName);
-        url = Utils.concatenate(url, "&lastName=");
-        url = Utils.concatenate(url, lastName);
-        url = Utils.concatenate(url, "&email=");
-        url = Utils.concatenate(url, email);
+    function craftUrl(string memory base, string memory firstName, string memory lastName, string memory email) internal view returns(string memory) {
+        string memory url = concatenate(base, "?firstName=");
+        url = concatenate(url, firstName);
+        url = concatenate(url, "&lastName=");
+        url = concatenate(url, lastName);
+        url = concatenate(url, "&email=");
+        url = concatenate(url, email);
 
         return url;
+    }
+
+    function concatenate(string memory s1, string memory s2) internal pure returns (string memory) {
+        return string(abi.encodePacked(s1, s2));
     }
 }

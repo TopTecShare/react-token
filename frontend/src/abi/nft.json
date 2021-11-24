@@ -1,11 +1,11 @@
 {
-  "4": {
-    "rinkeby": {
-      "name": "rinkeby",
-      "chainId": "4",
+  "42": {
+    "kovan": {
+      "name": "kovan",
+      "chainId": "42",
       "contracts": {
-        "NFTManager": {
-          "address": "0x8eD798B949F297b343d6820544D63c094921985f",
+        "PersonalIdentityToken": {
+          "address": "0x40a19da8f395cf76d4900959080840f8c5251a9c",
           "abi": [
             {
               "inputs": [],
@@ -82,18 +82,18 @@
               "inputs": [
                 {
                   "indexed": true,
-                  "internalType": "bytes32",
-                  "name": "requestId",
-                  "type": "bytes32"
+                  "internalType": "address",
+                  "name": "previousOwner",
+                  "type": "address"
                 },
                 {
                   "indexed": true,
-                  "internalType": "bytes",
-                  "name": "data",
-                  "type": "bytes"
+                  "internalType": "address",
+                  "name": "newOwner",
+                  "type": "address"
                 }
               ],
-              "name": "RequestFulfilled",
+              "name": "OwnershipTransferred",
               "type": "event"
             },
             {
@@ -122,21 +122,51 @@
               "type": "event"
             },
             {
+              "inputs": [],
+              "name": "baseUrl",
+              "outputs": [
+                {
+                  "internalType": "string",
+                  "name": "",
+                  "type": "string"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "cid",
+              "outputs": [
+                {
+                  "internalType": "string",
+                  "name": "",
+                  "type": "string"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
               "inputs": [
                 {
                   "internalType": "string",
-                  "name": "cid",
+                  "name": "firstName",
+                  "type": "string"
+                },
+                {
+                  "internalType": "string",
+                  "name": "lastName",
+                  "type": "string"
+                },
+                {
+                  "internalType": "string",
+                  "name": "email",
                   "type": "string"
                 }
               ],
               "name": "create",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
+              "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
             },
@@ -156,24 +186,6 @@
             {
               "inputs": [
                 {
-                  "internalType": "bytes32",
-                  "name": "requestId",
-                  "type": "bytes32"
-                },
-                {
-                  "internalType": "bytes",
-                  "name": "bytesData",
-                  "type": "bytes"
-                }
-              ],
-              "name": "fulfillBytes",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
                   "internalType": "address",
                   "name": "person",
                   "type": "address"
@@ -188,25 +200,6 @@
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "string",
-                  "name": "clientId",
-                  "type": "string"
-                }
-              ],
-              "name": "getKycData",
-              "outputs": [
-                {
-                  "internalType": "string",
-                  "name": "",
-                  "type": "string"
-                }
-              ],
-              "stateMutability": "nonpayable",
               "type": "function"
             },
             {
@@ -236,6 +229,24 @@
               "type": "function"
             },
             {
+              "inputs": [
+                {
+                  "internalType": "bytes32",
+                  "name": "requestId",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes",
+                  "name": "bytesData",
+                  "type": "bytes"
+                }
+              ],
+              "name": "mintTokenCallback",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
               "inputs": [],
               "name": "name",
               "outputs": [
@@ -243,6 +254,19 @@
                   "internalType": "string",
                   "name": "",
                   "type": "string"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "owner",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
                 }
               ],
               "stateMutability": "view",
@@ -275,6 +299,26 @@
               "type": "function"
             },
             {
+              "inputs": [],
+              "name": "renounceOwnership",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "string",
+                  "name": "url",
+                  "type": "string"
+                }
+              ],
+              "name": "setBaseUrl",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
               "inputs": [
                 {
                   "internalType": "bytes4",
@@ -328,205 +372,34 @@
             {
               "inputs": [
                 {
-                  "internalType": "uint256",
-                  "name": "amount",
-                  "type": "uint256"
+                  "internalType": "address",
+                  "name": "newOwner",
+                  "type": "address"
                 }
               ],
+              "name": "transferOwnership",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "user",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
               "name": "withdrawLink",
               "outputs": [],
               "stateMutability": "nonpayable",
-              "type": "function"
-            }
-          ]
-        }
-      }
-    }
-  },
-  "42": {
-    "kovan": {
-      "name": "kovan",
-      "chainId": "42",
-      "contracts": {
-        "NFTManager": {
-          "address": "0x00bcA885219640C2d2CeBD97AB4F494069683fD3",
-          "abi": [
-            {
-              "inputs": [],
-              "stateMutability": "nonpayable",
-              "type": "constructor"
-            },
-            {
-              "anonymous": false,
-              "inputs": [
-                {
-                  "indexed": false,
-                  "internalType": "address",
-                  "name": "user",
-                  "type": "address"
-                }
-              ],
-              "name": "IdentityTokenAssigned",
-              "type": "event"
-            },
-            {
-              "anonymous": false,
-              "inputs": [
-                {
-                  "indexed": false,
-                  "internalType": "address",
-                  "name": "user",
-                  "type": "address"
-                }
-              ],
-              "name": "IdentityTokenRemoved",
-              "type": "event"
-            },
-            {
-              "anonymous": false,
-              "inputs": [
-                {
-                  "indexed": false,
-                  "internalType": "address",
-                  "name": "",
-                  "type": "address"
-                },
-                {
-                  "indexed": false,
-                  "internalType": "address",
-                  "name": "",
-                  "type": "address"
-                },
-                {
-                  "indexed": false,
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "name": "Transfer",
-              "type": "event"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "string",
-                  "name": "cid",
-                  "type": "string"
-                }
-              ],
-              "name": "createIdentityToken",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [],
-              "name": "deleteIdentityToken",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [],
-              "name": "getIdentityToken",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [],
-              "name": "name",
-              "outputs": [
-                {
-                  "internalType": "string",
-                  "name": "",
-                  "type": "string"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-                }
-              ],
-              "name": "ownerOf",
-              "outputs": [
-                {
-                  "internalType": "address",
-                  "name": "",
-                  "type": "address"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "bytes4",
-                  "name": "interfaceId",
-                  "type": "bytes4"
-                }
-              ],
-              "name": "supportsInterface",
-              "outputs": [
-                {
-                  "internalType": "bool",
-                  "name": "",
-                  "type": "bool"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [],
-              "name": "symbol",
-              "outputs": [
-                {
-                  "internalType": "string",
-                  "name": "",
-                  "type": "string"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-                }
-              ],
-              "name": "tokenURI",
-              "outputs": [
-                {
-                  "internalType": "string",
-                  "name": "",
-                  "type": "string"
-                }
-              ],
-              "stateMutability": "view",
               "type": "function"
             }
           ]
