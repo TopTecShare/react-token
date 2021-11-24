@@ -16,7 +16,7 @@ app.listen(port, function() {
 */
 
 const privateKey = fs.readFileSync( process.env.SSL_ROOT+"key.pem" );
-const certificate = fs.readFileSync( process.env.SSL_ROOT+"ceert.pem" );
+const certificate = fs.readFileSync( process.env.SSL_ROOT+"cert.pem" );
 const ca = fs.readFileSync( process.env.SSL_ROOT+"cert.pem" );
 
 https.createServer({
