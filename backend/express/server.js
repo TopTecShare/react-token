@@ -8,16 +8,17 @@ const https = require('https');
 const fs = require('fs');
 
 routes(app);
-
-/*
 app.use(cors());
+/*
 app.listen(port, function() {
    console.log('Server started on port: ' + port);
 });
 */
 
+var privateKey = fs.readFileSync( process.env.SSL_PRIVKEY );
+var certificate = fs.readFileSync( process.env.SSL_CERT );
+
 https.createServer({
-   key: fs.readFileSync('/root/certs/key.pem'),
-   cert: fs.readFileSync('/root/certs/cert.pem')
-}, app)
-.listen(port);
+    key: privateKey,
+    cert: certificate
+}, app).listen(port);
