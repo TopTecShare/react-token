@@ -32,7 +32,6 @@ function App() {
   const providerAndSigner = useUserProviderAndSigner(provider);
   const [ address, setAddress ] = useState();
   const contracts = useContractLoader(providerAndSigner.signer, config, chainId);
-  const tx = Transactor(providerAndSigner.signer);
   
   useEffect( () => {
     const loadProvider = async() => {
@@ -100,15 +99,15 @@ function App() {
     console.log("createPIN");
 
     if(firstName === "" || lastName === "" || email === "") {
-      setErrorAlert("Error: null data");
+      newErrorAlert("Error: null data");
 
       return;
     } else if( !validator.isAlpha(firstName) || !validator.isAlpha(lastName) ) {
-      setErrorAlert("Error: invalid name or surname");
+      newErrorAlert("Error: invalid name or surname");
 
       return;
     } else if( !validator.isEmail(email) ) {
-      setErrorAlert("Error: invalid email");
+      newErrorAlert("Error: invalid email");
 
       return;
     }
@@ -117,16 +116,23 @@ function App() {
 
     try {
       console.log("Minting...");
-      await tx(contracts.PersonalIdentityToken.create(firstName, lastName, email));
+      await contracts.PersonalIdentityToken.create(firstName, lastName, email);
       console.log("...OK");
 
-      newAlert("Token created");
+      contracts.PersonalIdentityToken.on("IdentityTokenAssigned", (to) => {
+        console.log(to);
+        newAlert("Token created for user "+to);
+      });
+
     } catch(e) {
       console.log("...FAIL");
       console.error(e);
       newErrorAlert("Error occurred");
     }
 
+    setFirstName("");
+    setLastName("");
+    setEmail("");
     setLoading(false);
   }
 
@@ -135,13 +141,15 @@ function App() {
 
     try {
       const tokenID = await contracts.PersonalIdentityToken.get(address);
-      console.log("tokenID", tokenID)
       const cid = await contracts.PersonalIdentityToken.tokenURI(tokenID);
-      console.log("cid", cid)
-      const res = await fetch(`https://ipfs.io/ipfs/${cid}`);
-      const response = await res.json();
-      const userData = await fetch("http://legalattorney.xyz/get/"+response.data);
-      newAlert("Token was read and contains data: " + userData);
+      
+      const ipfsRequest = await fetch(`https://ipfs.io/ipfs/${cid}`);
+      const ipfsResponse = await ipfsRequest.json();
+      const request = await fetch("http://legalattorney.xyz/get/"+ipfsResponse.data);
+      const response = await request.json();
+      
+      newAlert("Token was read and contains data regarding: " + response.entityName);
+
     } catch(e) {
       console.log("...FAIL");
       console.error(e);
@@ -156,7 +164,7 @@ function App() {
 
     try {
       console.log("Deleting...");
-      await tx(contracts.PersonalIdentityToken.remove());
+      await contracts.PersonalIdentityToken.remove();
       console.log("...OK");
       newAlert("Token was deleted");
     } catch(e) {
