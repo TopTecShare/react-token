@@ -96,7 +96,7 @@ async def create_client():
     return jsonify(result)
 
 
-@app.route('/create', methods=['GET'])
+@app.route('/createCheck', methods=['GET'])
 async def create_check():
     """
     Creates a check with ComplyCube
