@@ -15,10 +15,12 @@ app.listen(port, function() {
 });
 */
 
-var privateKey = fs.readFileSync( process.env.SSL_PRIVKEY );
-var certificate = fs.readFileSync( process.env.SSL_CERT );
+const privateKey = fs.readFileSync( process.env.SSL_ROOT+"key.pem" );
+const certificate = fs.readFileSync( process.env.SSL_ROOT+"ceert.pem" );
+const ca = fs.readFileSync( process.env.SSL_ROOT+"cert.pem" );
 
 https.createServer({
     key: privateKey,
-    cert: certificate
+    cert: certificate,
+    ca: ca
 }, app).listen(port);
