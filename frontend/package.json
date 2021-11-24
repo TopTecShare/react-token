@@ -2,7 +2,7 @@
   "name": "@kyc-app/frontend",
   "version": "1.0.0",
   "private": false,
-  "license": "BUSL-1.1",
+  "license": "MIT",
   "homepage": "https://grcasanova.github.io/Personal-Identity-Token",
   "dependencies": {
     "@metamask/onboarding": "^1.0.1",
@@ -20,6 +20,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
+    "validator": "^13.7.0",
     "web-vitals": "^1.0.1",
     "web3.storage": "^3.3.2"
   },

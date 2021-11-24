@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: BUSL-1.1
+//SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
@@ -173,7 +173,6 @@ contract ERC721 is Context, ERC165 {
     function _mint(address to, uint256 tokenId) internal virtual {
         require(to != address(0), "ERC721: mint to the zero address");
         require(!_exists(tokenId), "ERC721: token already minted");
-        require(_nft[to] == 0, "Only one token per wallet allowed");
 
         _beforeTokenTransfer(address(0), to, tokenId);
 

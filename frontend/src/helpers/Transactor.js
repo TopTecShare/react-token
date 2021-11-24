@@ -27,7 +27,6 @@ export const Transactor = (providerOrSigner, gasPrice, etherscan) => {
         network = await providerOrSigner.getNetwork();
       }
 
-      console.log("network", network);
       var options = null;
       var notify = null;
         options = {
@@ -140,7 +139,7 @@ export const Transactor = (providerOrSigner, gasPrice, etherscan) => {
           //ignore
         }
 
-        notification.error({
+        notification.info({
           message: "Transaction Error",
           description: message,
         });
