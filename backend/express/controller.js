@@ -10,6 +10,10 @@ const controller = {
     res.json({"name":"personal identity token", "version":"v1"});
   },
 
+  cancel: async (req, res, next) => {
+    res.json({"message":"your action was cancelled"});
+  },
+
   get: async (req, res, next) => {
     try {
       const checkResponse = await complycube.check.create(req.params.clientId, {
@@ -26,6 +30,28 @@ const controller = {
     }
   },
 
+  check: async (req, res, next) => {
+    try {
+      const session = await complycube.flow.createSession(req.params.clientId, {
+        checkTypes: [
+          "standard_screening_check",
+          "identity_check",
+          "document_check"
+        ],
+        successUrl: "http://legalattorney.xyz/get/"+req.params.clientId,
+        cancelUrl: "http://legalattorney.xyz/cancel",
+        theme: "light"
+      });
+
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader('Access-Control-Allow-Methods', '*');
+      res.setHeader("Access-Control-Allow-Headers", "*");
+      res.json(session);
+    } catch (error) {
+      return next(error)
+    }
+  },
+
   create: async (req, res, next) => {
     try {
       const client = await complycube.client.create({
@@ -36,19 +62,6 @@ const controller = {
           lastName: req.query.lastName
         }
       });
-
-      /*
-      const session = await complycube.flow.createSession(client.id, {
-        checkTypes: [
-          "standard_screening_check",
-          "identity_check",
-          "document_check"
-        ],
-        successUrl: "http://localhost:8080/get/"+client.id,
-        cancelUrl: "http://localhost:8080/cancel",
-        theme: "light"
-      });
-      */
 
       const cid = await uploadToIPFS(client.id);
 

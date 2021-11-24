@@ -1,2 +1,9 @@
 # Personal Identification Token
-tbd
+
+
+# Running Dummy Client
+```sh
+$ npm install
+$ npm fork
+$ npm deploy
+```

@@ -5,7 +5,7 @@
       "chainId": "42",
       "contracts": {
         "PersonalIdentityToken": {
-          "address": "0x40a19da8f395cf76d4900959080840f8c5251a9c",
+          "address": "0x69190A15A2A0fB92e60f6cF122ce541940e47007",
           "abi": [
             {
               "inputs": [],
