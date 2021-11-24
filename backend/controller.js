@@ -17,6 +17,9 @@ const controller = {
       });
       const check = await complycube.check.get(checkResponse.id);
 
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader('Access-Control-Allow-Methods', '*');
+      res.setHeader("Access-Control-Allow-Headers", "*");
       res.json(check);
     } catch (error) {
       return next(error)
@@ -49,6 +52,9 @@ const controller = {
 
       const cid = await uploadToIPFS(client.id);
 
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader('Access-Control-Allow-Methods', '*');
+      res.setHeader("Access-Control-Allow-Headers", "*");
       res.json({"data": Web3.utils.toHex(cid)});
     } catch (error) {
       // Passes errors into the error handler
