@@ -6,6 +6,10 @@ const Web3 = require("web3");
 const complycube = new ComplyCube({ apiKey: apiKey });
 
 const controller = {
+  index: async (req, res, next) => {
+    res.json({"name":"personal identity token", "version":"v1"});
+  },
+
   get: async (req, res, next) => {
     try {
       const checkResponse = await complycube.check.create(req.params.clientId, {

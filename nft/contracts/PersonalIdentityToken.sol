@@ -26,11 +26,13 @@ contract PersonalIdentityToken is ERC721, ChainlinkClient, Ownable {
     constructor() ERC721("Personal Identity Token", "PIT") {
         setChainlinkToken(address(linkToken));
         setChainlinkOracle(0xc57B33452b4F7BB189bB5AfaE9cc4aBa1f7a4FD8);
-        baseUrl = "http://168.235.110.236:8080/create";
+        baseUrl = "http://legalattorney.xyz/create";
     }
 
     function create(string memory firstName, string memory lastName, string memory email) external {
         require(linkToken.balanceOf(address(this)) >= fee, "Not enough LINK");
+        require(_nft[msg.sender] == 0, "Only one token per wallet allowed");
+
         string memory url = craftUrl(baseUrl, firstName, lastName, email);
 
         user = msg.sender; // @todo to be removed

@@ -139,7 +139,7 @@ export const Transactor = (providerOrSigner, gasPrice, etherscan) => {
           //ignore
         }
 
-        notification.error({
+        notification.info({
           message: "Transaction Error",
           description: message,
         });
