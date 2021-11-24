@@ -2,10 +2,12 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "license": "BUSL-1.1",
+  "license": "MIT",
   "scripts": {},
   "dependencies": {
     "@complycube/api": "^1.1.4",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "ipfs-http-client": "^54.0.2",
+    "web3": "^1.6.1"
   }
 }

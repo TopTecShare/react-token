@@ -1,5 +1,7 @@
 const apiKey = process.env.COMPLYCUBE_API_KEY || "";
 const { ComplyCube } = require("@complycube/api");
+const { create } = require("ipfs-http-client");
+const Web3 = require("web3");
 
 const complycube = new ComplyCube({ apiKey: apiKey });
 
@@ -21,15 +23,14 @@ const controller = {
     try {
       const client = await complycube.client.create({
         type: "person",
-        email: req.params.email,
+        email: req.query.email,
         personDetails: {
-          firstName: req.params.firstName,
-          lastName: req.params.lastName
+          firstName: req.query.firstName,
+          lastName: req.query.lastName
         }
       });
 
-      console.log("clientId", client.id)
-
+      /*
       const session = await complycube.flow.createSession(client.id, {
         checkTypes: [
           "standard_screening_check",
@@ -40,13 +41,24 @@ const controller = {
         cancelUrl: "http://localhost:8080/cancel",
         theme: "light"
       });
+      */
 
-      res.json(session);
+      const cid = await uploadToIPFS(client.id);
+
+      res.json({"data": Web3.utils.toHex(cid)});
     } catch (error) {
       // Passes errors into the error handler
       return next(error)
     }
   },
 };
+
+const uploadToIPFS = async (data) => {
+  const file = JSON.stringify({data: data, version: "v1"});
+  const client = create(new URL('https://ipfs.infura.io:5001/api/v0'));
+  const cid = await client.add(file);
+
+  return cid.path;
+}
 
 module.exports = controller;

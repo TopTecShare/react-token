@@ -2,7 +2,7 @@
   "name": "@kyc-app/core",
   "version": "1.0.0",
   "private": false,
-  "license": "BUSL-1.1",
+  "license": "MIT",
   "devDependencies": {
     "eslint": "^7.5.0",
     "eslint-config-airbnb": "^18.2.0",
@@ -16,6 +16,7 @@
     "solidity-coverage": "^0.7.17"
   },
   "dependencies": {
+    "@chainlink/contracts": "^0.2.2",
     "@eth-optimism/hardhat-ovm": "^0.2.3",
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-etherscan": "^2.1.6",

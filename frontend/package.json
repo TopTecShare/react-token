@@ -2,7 +2,7 @@
   "name": "@kyc-app/frontend",
   "version": "1.0.0",
   "private": false,
-  "license": "BUSL-1.1",
+  "license": "MIT",
   "homepage": "https://grcasanova.github.io/Personal-Identity-Token",
   "dependencies": {
     "@metamask/onboarding": "^1.0.1",

@@ -11,7 +11,7 @@ import {
 import { ethers } from 'ethers';
 import { toChecksumAddress } from 'ethereumjs-util';
 import { signTypedData } from 'eth-sig-util';
-import { create } from 'ipfs-http-client'
+import { create } from 'ipfs-http-client';
 import { useContractLoader, useUserProviderAndSigner } from 'eth-hooks';
 import { useContractConfig } from './hooks/useContractConfig';
 import { Transactor } from './helpers/Transactor';
@@ -55,6 +55,8 @@ function App() {
       params: [accounts[0]],
     });
 
+    console.log("encryptionKeyDisplay", encryptionKeyDisplay)
+
     const cyphertext = stringifiableToHex(
       encrypt(
         encryptionKeyDisplay,
@@ -83,36 +85,21 @@ function App() {
     return ethers.utils.hexlify(Buffer.from(JSON.stringify(value)));
   }
 
-  const uploadToIPFS = async (data) => {
-    const file = JSON.stringify({data: data, version: "v1"});
-    const client = create(new URL('https://ipfs.infura.io:5001/api/v0'));
-    const cid = await client.add(file);
-    console.log("[uploadToIPFS] cid", cid.path);
-
-    return cid.path;
-  }
-
   const createPIN = async() => {
     console.log("createPIN");
 
-    let userData = prompt("KYC Provider\nINPUT DATA\nPlease enter your full name", "John Doe");
-
-    if(userData === "") {
+    if(firstName === "" || lastName === "" || email === "") {
       setAlert("Error: null data");
 
       return;
     }
 
     try {
-      console.log("Encrypting...");
-      const dataToUpload = await encryptData(userData);
-      console.log("Uploading...");
-      const cid = await uploadToIPFS(dataToUpload);
       console.log("Minting...");
-      await tx(contracts.NFTManager.create(cid));
+      await tx(contracts.PersonalIdentityToken.create(firstName, lastName, email));
       console.log("...OK");
 
-      newAlert("Token created with data:" + userData);
+      newAlert("Token created");
     } catch(e) {
       console.log("...FAIL");
       console.error(e);
@@ -122,11 +109,11 @@ function App() {
 
   const getPIN = async() => {
     try {
-      const tokenID = await contracts.NFTManager.get();
-      const cid = await contracts.NFTManager.tokenURI(tokenID);
+      const tokenID = await contracts.PersonalIdentityToken.get();
+      const cid = await contracts.PersonalIdentityToken.tokenURI(tokenID);
       const res = await fetch(`https://ipfs.io/ipfs/${cid}`);
       const response = await res.json();
-      const userData = await decryptData(response.data);
+      const userData = await fetch("/get/"+response.data);
       newAlert("Token was read and contains data: " + userData);
     } catch(e) {
       console.log("...FAIL");
@@ -138,7 +125,7 @@ function App() {
   const deletePIN = async() => {
     try {
       console.log("Deleting...");
-      await tx(contracts.NFTManager.remove());
+      await tx(contracts.PersonalIdentityToken.remove());
       console.log("...OK");
       newAlert("Token was deleted");
     } catch(e) {
@@ -151,21 +138,24 @@ function App() {
   return (
     <div className="text-center">
       <span className="form-signin">
-        <h1 className="h3 mb-3 font-weight-normal">KYC Token</h1>
+        <h1 className="h3 mb-3 font-weight-normal">Personal Identity Token</h1>
         { alert.length > 0 &&
           <div className="alert alert-primary" role="alert">{alert}</div>
         }
         <br />
         <div class="mb-3">
-          <input type="text" class="form-control" id="name" placeholder="Name" onChange={(e) => setName(e.target.value)} />
+          <input type="text" class="form-control" id="firstName" placeholder="firstName" onChange={(e) => setFirstName(e.target.value)} required />
         </div>
         <div class="mb-3">
-          <input type="text" class="form-control" id="surname" placeholder="Surname" onChange={(e) => setSurname(e.target.value)} />
+          <input type="text" class="form-control" id="lastName" placeholder="lastName" onChange={(e) => setLastSurname(e.target.value)} required />
+        </div>
+        <div class="mb-3">
+          <input type="email" class="form-control" id="email" placeholder="email" onChange={(e) => setEmail(e.target.value)} required />
         </div>
         <button className="btn btn-lg btn-primary btn-block" onClick={() => createPIN()}>Create Personal Identity NFT</button>
         <button className="btn btn-lg btn-success btn-block" onClick={() => getPIN()}>Read Personal Identity NFT</button>
         <button className="btn btn-lg btn-danger btn-block" onClick={() => deletePIN()}>Delete Personal Identity NFT</button>
-        <p className="mt-5 mb-3 text-muted">Personal Identity Token</p>
+        <p className="mt-5 mb-3 text-muted">Personal Identity Token - made for ChainLink fall hack</p>
       </span>
     </div>
   );
