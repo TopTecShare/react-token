@@ -4,7 +4,7 @@ import yaml
 import logging
 import complycube
 
-from quart import Quart, request, jsonify, render_template_string
+from quart import Quart, request, jsonify
 
 CONFIG_LOC = '.personal-identity-token-config'
 

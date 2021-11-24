@@ -11,3 +11,5 @@ dependencies:
   - ipython
   - pip:
     - complycube
+    - py-eth-sig-utils
+    - ipfshttpclient
