@@ -13,3 +13,4 @@ dependencies:
     - complycube
     - py-eth-sig-utils
     - ipfshttpclient
+    - git+https://github.com/rmeissner/py-eth-sig-utils@master

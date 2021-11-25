@@ -3,6 +3,8 @@ import os
 import yaml
 import logging
 import complycube
+import ipfshttpclient
+import py_eth_sig_utils as pesu
 
 from quart import Quart, request, jsonify
 
@@ -67,12 +69,11 @@ async def create_client():
     """
     Creates a client and returns their ID for ComplyCube
     """
-    form_data = await request.form
     required_fields = ['firstName', 'lastName', 'email']
-    missing_fields = [form_data.get(field) for field in required_fields if field is None]
+    missing_fields = [request.args.get(field) for field in required_fields if field is None]
 
     logger.info(f'{request.path}: Received the client form-data:\n'
-                f'{json.dumps(form_data, sort_keys=True, indent=2)}')
+                f'{json.dumps(request.args, sort_keys=True, indent=2)}')
     if missing_fields:
         error_msg = f'The following required fields are missing from the request: {missing_fields}'
         logger.info(error_msg)
@@ -80,10 +81,10 @@ async def create_client():
 
     new_client = {
         'type': 'person',
-        'email': form_data.get('email'),
+        'email': request.args.get('email'),
         'personDetails': {
-            'firstName': form_data.get('firstName'),
-            'lastName': form_data.get('lastName'),
+            'firstName': request.args.get('firstName'),
+            'lastName': request.args.get('lastName'),
         }
     }
 
@@ -101,19 +102,18 @@ async def create_check():
     """
     Creates a check with ComplyCube
     """
-    form_data = await request.form
     required_fields = ['id', 'checkType']
-    missing_fields = [form_data.get(field) for field in required_fields if field is None]
+    missing_fields = [request.args.get(field) for field in required_fields if field is None]
 
     logger.info(f'{request.path}: Received the client form-data:\n'
-                f'{json.dumps(form_data, sort_keys=True, indent=2)}')
+                f'{json.dumps(request.args, sort_keys=True, indent=2)}')
     if missing_fields:
         error_msg = f'The following required fields are missing from the request: {missing_fields}'
         logger.info(error_msg)
         raise BadAPIRequestError(str(error_msg), payload={'endpoint': request.path})
 
     try:
-        result = cc_api.checks.create(form_data['id'], type=form_data['checkType']).to_dict()
+        result = cc_api.checks.create(request.args['id'], type=request.args['checkType']).to_dict()
         logger.info(f'Created check:\n{json.dumps(result, sort_keys=True, indent=2)}')
     except complycube.error.ComplyCubeAPIError as error_msg:
         logger.error(error_msg)
@@ -126,7 +126,7 @@ async def check_id():
     """
     Gets the result of the check from the corresponding ID provided to ComplyCube
     """
-    client_id = (await request.form).get('clientId', None)
+    client_id = request.args.get('clientId', None)
     if client_id is None:
         error_msg = 'No `clientId` found in GET data'
         logger.info(error_msg)
@@ -139,6 +139,26 @@ async def check_id():
         logger.error(error_msg)
         raise BadAPIRequestError(str(error_msg), payload={'endpoint': request.path})
     return jsonify(result)
+
+
+@app.route('/uploadIdIHFS', methods=['GET'])
+async def upload_id_to_ihfs():
+    """
+    uploads the client data to IHFS
+    """
+    required_fields = ['json_data', 'wallet_address']
+    missing_fields = [request.args.get(field) for field in required_fields if field is None]
+
+    if missing_fields:
+        error_msg = f'The following required fields are missing from the request: {missing_fields}'
+        logger.info(error_msg)
+        raise BadAPIRequestError(str(error_msg), payload={'endpoint': request.path})
+
+    try:
+        ipfs_hash = ipfshttpclient.connect().add(request.args.get('json_data'))
+        jsonify({'success': ipfs_hash})
+    except Exception as err:
+        return jsonify({'error': str(err)})
 
 
 if __name__ == "__main__":
