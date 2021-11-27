@@ -1,9 +1,9 @@
 {
-  "name": "@kyc-app/frontend",
+  "name": "@monorepo/frontend",
   "version": "1.0.0",
   "private": false,
   "license": "MIT",
-  "homepage": "https://grcasanova.github.io/Personal-Identity-Token",
+  "homepage": "https://personal-identity-token.github.io/monorepo",
   "dependencies": {
     "@metamask/onboarding": "^1.0.1",
     "@testing-library/jest-dom": "^5.11.4",
